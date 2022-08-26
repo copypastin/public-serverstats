@@ -13,3 +13,4 @@ Created by ssoups (me)
 
 API - https://api.mcsrvstat.us/
 
+(P.S probably not the most up to date)
