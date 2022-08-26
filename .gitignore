@@ -1,0 +1,5 @@
+data/img/
+/node_modules
+/package-lock.json
+src/botconfig.json
+src/analytics.ts
