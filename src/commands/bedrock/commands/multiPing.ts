@@ -2,7 +2,6 @@ import { EmbedBuilder } from "discord.js";
 import fetch from 'node-fetch'
 
 export default function bmultiPing(message, server) {
-    //if(num >= 0 && num <= 10) return console.log('Number must be greater than 0 and less than 50.')
     var result = []
     var i = 0
 

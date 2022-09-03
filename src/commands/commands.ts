@@ -17,18 +17,18 @@ export default function listcommands(message){
         .addFields(
             { name: 'findPlayers', value: 'find player on server', inline: true },
             { name: 'getPlayers', value: 'List online players.', inline: true },
-            { name: 'serverInfo', value: 'wip', inline: true })
-        
+            { name: 'serverInfo', value: 'Get server info.', inline: true },
+            { name: 'multiping', value: 'Pings a java server 10 times in 5 second intervals.', inline: true }
+        )
     const bedrockEmbed = new EmbedBuilder()
         .setColor('Yellow')
         .setTitle(`Bedrock Commands`)
-        .setDescription('work in progress')
-        // .setThumbnail('https://i.imgur.com/AfFp7pu.png')
         .addFields(
-            { name: 'aaaaaaaaaaaaaaaaa', value: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', inline: true }
+            { name: 'bmultiping', value: 'Pings a bedrock server 10 times in 5 second intervals.', inline: true },
+            { name: 'serverInfo', value: 'Get server info.', inline: true }
         )
         .setTimestamp()
-        .setFooter({ text: `Prefix: ${prefix} • 🏓 ${(Date.now() - message.createdTimestamp)/1000}s to run!`, iconURL: 'https://i.imgur.com/AfFp7pu.png' });
+        .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: `${message.author.avatarURL()}` });
 
 
 

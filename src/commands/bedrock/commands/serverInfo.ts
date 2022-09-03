@@ -34,7 +34,7 @@ export default function bedrockserverInfo(message, server) {
                     { name: 'Server ID', value: `\`\`${json.serverid}\`\`` },
                     { name: 'Version', value: `${json.version}`, inline: true },
                     { name: 'Players', value: `${json.players.online}/${json.players.max}`, inline: true },
-                    { name: 'Software', value: `${embedInfo.software}`, inline: true }, //HUGE ERROR HERE
+                    { name: 'Software', value: `${embedInfo.software}`, inline: true },
                     { name: 'Plugins', value: `${embedInfo.plugins}`, inline: false }
                 )
                 .setTimestamp()
