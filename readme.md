@@ -1,4 +1,4 @@
-i dont really update the public one much anymore
+I NO LONGER WORK ON THE PUBLIC SERVERSTAT
 
 
 ## minecraft server pinger
