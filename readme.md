@@ -1,3 +1,6 @@
+i dont really update the public one much anymore
+
+
 ## minecraft server pinger
 
 supports java and bedrock!!
