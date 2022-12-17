@@ -1,7 +1,6 @@
-import { Client, DiscordAPIError, GatewayIntentBits, Partials } from 'discord.js'
+import { Client, DiscordAPIError, GatewayIntentBits, Partials, EmbedBuilder } from 'discord.js'
 import bedrockserverInfo from './commands/bedrock/commands/serverInfo'
 import bmultiPing from './commands/bedrock/commands/multiPing'
-import findPlayers from './commands/java/commands/findPlayer'
 import serverInfo from './commands/java/commands/serverInfo'
 import getPlayers from './commands/java/commands/getPlayers'
 import multiPing from './commands/java/commands/multiPing'
@@ -31,125 +30,150 @@ client.once('ready', () => {
 });
 
 client.on('messageCreate', message => {
-   if (timeoutList.has(message.author.id)) (message.channel.send("Please wait before sending another command!"))
-   else {
-      if (message.author.bot || !message.content.includes(prefix)) return;
-      if (apiStatus() === false) message.channel.send('Service is temporarily unavalible')
+   if (message.author.bot || !message.content.includes(prefix)) return;
 
-      //Commands
-      if (message.content.toLowerCase().includes(`${prefix}commands`)) {
-         listcommands(message)
+   // Checks if user is timedout
+   else if (timeoutList.has(message.author.id)) {
+      const errorEmbed = new EmbedBuilder()
+         .setColor("Red")
+         .setTitle(`Slow down!`)
+         .setDescription("Please wait before sending another command!")
+         .setTimestamp()
+         .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: `${message.author.avatarURL()}` });
+      message.channel.send({ embeds: [errorEmbed] })
+      return;
+   }
+
+   // Checks api's status
+   else if (apiStatus() === false) {
+      const errorEmbed = new EmbedBuilder()
+         .setColor("Red")
+         .setTitle(`Error`)
+         .setDescription("Service is temporarily unavalible.")
+         .setTimestamp()
+         .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: `${message.author.avatarURL()}` });
+      message.channel.send({ embeds: [errorEmbed] })
+      return;
+   }
+
+
+
+   // Sends list of commands
+   if (message.content.toLowerCase().includes(`${prefix}commands`)) {
+
+      setTimeout(() => {
+         multiPingTO.delete(message.author.id);
+      }, 8000);
+
+      listcommands(message)
+   }
+
+   // Sends list of players on a java server
+   if (message.content.toLowerCase().includes(`${prefix}getplayers`)) {
+      let msg = message.content.split(' ')
+      var ip = msg[1]
+
+      setTimeout(() => {
+         multiPingTO.delete(message.author.id);
+      }, 8000);
+
+      if (msg.length === 2) {
+         getPlayers(message, ip)
       }
-
-      //Java Findplayer
-      if (message.content.toLowerCase().includes(`${prefix}findplayer`)) {
-         let msg = message.content.split(' ')
-         var info = {
-            'ip': msg[1],
-            'user': msg[2]
-         }
-
-
-         if (msg.length === 3) {
-            findPlayers(message, info.user, info.ip)
+      else {
+         if (msg.length === 1) {
+            const errorEmbed = new EmbedBuilder()
+               .setColor("Red")
+               .setTitle(`Server ip is missing!`)
+               .setDescription(" \n\`Ex. ${prefix}getplayers amcserver.net\`")
+               .setTimestamp()
+               .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: `${message.author.avatarURL()}` });
+            message.channel.send({ embeds: [errorEmbed] })
          }
          else {
-            if (msg.length === 1) {
-               message.channel.send(`Username and server ip is missing. \n\`Ex. ${prefix}findPlayers SpelledAaron amcserver.net\``)
-            }
-            else if (msg.length === 2) {
-               message.channel.send(`Server ip is missing. \n\`Ex. ${prefix}findPlayers SpelledAaron amcserver.net\``)
-            }
-            else {
-               message.channel.send('Something went wrong.')
-            }
+            message.channel.send('Something went wrong.')
          }
       }
+   }
 
-      //Java Getplayers
-      if (message.content.toLowerCase().includes(`${prefix}getplayers`)) {
+   if (message.content.toLowerCase().includes(`${prefix}serverinfo`)) {
+      let msg = message.content.split(' ')
+
+      setTimeout(() => {
+         multiPingTO.delete(message.author.id);
+      }, 8000);
+
+      serverInfo(message, msg[1])
+   }
+
+   // Server info for bedrock
+   if (message.content.toLowerCase().includes(`${prefix}bedrockserverinfo`) || message.content.toLowerCase().includes(`${prefix}bserverinfo`)) {
+      let msg = message.content.split(' ')
+      bedrockserverInfo(message, msg[1])
+
+      multiPingTO.add(message.author.id);
+      setTimeout(() => {
+         multiPingTO.delete(message.author.id);
+      }, 8000);
+   }
+
+
+
+   // Bedrock multiping
+   if (message.content.toLowerCase().includes(`${prefix}bmultiping`)) {
+      if (!(multiPingTO.has(message.author.id))) {
+
+         multiPingTO.add(message.author.id);
+
+         // Multiping Timeout
+         setTimeout(() => {
+            multiPingTO.delete(message.author.id);
+         }, 50000);
+
+
          let msg = message.content.split(' ')
-         var ip = msg[1]
+         bmultiPing(message, msg[1])
 
 
-
-         if (msg.length === 2) {
-            getPlayers(message, ip)
-         }
-         else {
-            if (msg.length === 1) {
-               message.channel.send(`Server ip is missing. \n\`Ex. ${prefix}findPlayers amcserver.net\``)
-            }
-            else {
-               message.channel.send('Something went wrong.')
-            }
-         }
       }
-
-      if (message.content.toLowerCase().includes(`${prefix}serverinfo`)) {
-         let msg = message.content.split(' ')
-
-         serverInfo(message, msg[1])
+      else {
+         const errorEmbed = new EmbedBuilder()
+            .setColor("Red")
+            .setTitle(`Slow down! You have a multiping active!`)
+            .setTimestamp()
+            .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: `${message.author.avatarURL()}` });
+         message.channel.send({ embeds: [errorEmbed] })
       }
+   }
 
-      if (message.content.toLowerCase().includes(`${prefix}bedrockserverinfo`) || message.content.toLowerCase().includes(`${prefix}bserverinfo`)) {
-         let msg = message.content.split(' ')
-         bedrockserverInfo(message, msg[1])
 
+
+   // Java Multiping Command 
+   if (message.content.toLowerCase().includes(`${prefix}multiping`)) {
+
+      if (!(multiPingTO.has(message.author.id))) {
+
+         // Multiping Timeout
          multiPingTO.add(message.author.id);
          setTimeout(() => {
             multiPingTO.delete(message.author.id);
-         }, 8000);
+         }, 50000);
+
+
+         let msg = message.content.split(' ')
+         multiPing(message, msg[1])
+
       }
+      else {
+         const errorEmbed = new EmbedBuilder()
+            .setColor("Red")
+            .setTitle(`Slow down! You have a multiping active!`)
+            .setTimestamp()
+            .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: `${message.author.avatarURL()}` });
 
-
-      if (message.content.toLowerCase().includes(`${prefix}bmultiping`)) {
-         if (!(multiPingTO.has(message.author.id))) {
-
-            multiPingTO.add(message.author.id);
-            setTimeout(() => {
-               multiPingTO.delete(message.author.id);
-            }, 50000);
-
-
-            let msg = message.content.split(' ')
-            bmultiPing(message, msg[1])
-
-
-         }
-         else {
-            message.channel.send('Slow down! You have a multiping active!')
-         }
+         message.channel.send({ embeds: [errorEmbed] })
       }
-
-
-
-      if (message.content.toLowerCase().includes(`${prefix}multiping`)) {
-
-         if (!(multiPingTO.has(message.author.id))) {
-
-            multiPingTO.add(message.author.id);
-            setTimeout(() => {
-               multiPingTO.delete(message.author.id);
-            }, 50000);
-
-
-            let msg = message.content.split(' ')
-            multiPing(message, msg[1])
-
-         }
-         else {
-            message.channel.send('Slow down! You have a multiping active!')
-         }
-      }
-
-      timeoutList.add(message.author.id);
-      setTimeout(() => {
-         timeoutList.delete(message.author.id);
-      }, 1000);
-
    }
-
 })
 
 client.login(token);

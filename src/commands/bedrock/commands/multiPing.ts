@@ -15,12 +15,12 @@ export default function bmultiPing(message, server) {
 
     message.channel.send({embeds: [prepareEmbed]})
         .then(msg => {
-            foreverLoop(msg, server)
+            loop(msg, server)
         })
 
         
 
-    function foreverLoop(msg, server) {
+    function loop(msg, server) {
         setTimeout(function () {
             fetch(`https://api.mcsrvstat.us/bedrock/2/${server}`)
                 .then(res => res.json())
@@ -59,7 +59,7 @@ export default function bmultiPing(message, server) {
                 })
             if (i <= 10) {
                 i++;
-                foreverLoop(msg, server);
+                loop(msg, server);
             }
         }, 5000)
     }

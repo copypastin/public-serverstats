@@ -18,6 +18,7 @@ export default function serverInfo(message, server){
         } catch {
             embedInfo.plugins = "No public plugins found."
         }
+        
         if(!embedInfo.software == undefined) embedInfo.software
         else{
             embedInfo.software = "No software found."
@@ -34,7 +35,7 @@ export default function serverInfo(message, server){
                 { name: 'MOTD', value: `\`\`${json.motd.raw}\`\``},
                 { name: 'Version', value: `${json.version}`, inline: true },
                 { name: 'Players', value: `${json.players.online}/${json.players.max}`, inline: true },
-                { name: 'Software', value: `${embedInfo.software}`, inline: true }, //HUGE ERROR HERE
+                { name: 'Software', value: `${embedInfo.software}`, inline: true },
                 { name: 'Plugins', value: `${embedInfo.plugins}`, inline: false }
               )
               .setTimestamp()

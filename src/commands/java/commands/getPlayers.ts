@@ -7,6 +7,7 @@ export default function getPlayers(message,server){
     .then(json => {
         if(!validate(message, json)) return
 
+        console.log(json.players.online)
         if(json.players.online == 0) return message.channel.send(`No players are online.`)
 
         let msg = 'The current online players are: \n'
