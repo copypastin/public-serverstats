@@ -1,3 +1,6 @@
+I NO LONGER WORK ON THE PUBLIC SERVERSTAT
+
+
 ## minecraft server pinger
 
 (here we go again)
